@@ -8,12 +8,13 @@
    - `bitable:app`（查看、评论多维表格）
    - `docx:document:readonly`（查看文档）
    - `drive:drive:readonly`（查看云空间中文件，用于下载图片）
+   - `wiki:wiki:readonly`（查看知识库，用于解析知识库链接）
 4. 「安全设置」中把仓库域名等回调域名随便填一个（同步不需要回调）
 5. **发布应用**（版本管理与发布 → 创建版本 → 申请发布）
 
 ## 二、创建多维表格
 
-在飞书里新建一个多维表格（可以两个表放同一个里），按下表建字段。
+建议在飞书**知识库**里新建多维表格（知识库 → 新建 → 多维表格），后续的文章文档也放在同一个知识库里，权限好管理。两个数据表放在同一个多维表格里即可，按下表建字段。
 
 ### 作品表
 
@@ -48,18 +49,16 @@
 
 > 写长文建议用「文档」字段：在飞书里正常写富文本，图片会自动下载到仓库。简单的短文直接在「正文」里写 Markdown 就行。
 
-### 拿到表格 ID
+### 拿到表格链接
 
-打开多维表格，看浏览器地址栏：
+在知识库左侧目录里，**右键多维表格 → 复制链接**，得到一个 `https://xxx.feishu.cn/wiki/...` 开头的链接，后面填 Secret 时直接粘贴它即可：
 
-```
-https://xxx.feishu.cn/base/<APP_TOKEN>?table=<TABLE_ID>&view=...
-```
+- `FEISHU_WORKS_APP_TOKEN` / `FEISHU_POSTS_APP_TOKEN` = 粘贴多维表格的链接（`/wiki/` 或 `/base/` 开头都支持，也可以只填纯 token）
+- `FEISHU_WORKS_TABLE_ID` / `FEISHU_POSTS_TABLE_ID` = 直接填表名（如 `作品表`、`文章表`），也可以填 `tbl` 开头的表 ID
 
-- `FEISHU_WORKS_APP_TOKEN` / `FEISHU_POSTS_APP_TOKEN` = `<APP_TOKEN>`
-- `FEISHU_WORKS_TABLE_ID` / `FEISHU_POSTS_TABLE_ID` = `<TABLE_ID>`
+> ⚠️ 表名要和上面建的字段表名完全一致（脚本按表名查找）。若脚本提示「表里找不到」，错误信息会列出所有现有表名，照着改即可。
 
-> 注意：把这两个多维表格**添加为应用可用资源**（应用详情 → 添加应用 → 选你的多维表格），否则 API 会报无权限。文档同理，在文档右上角「…」→ 添加文档应用。
+> 注意：把多维表格**添加为应用可用资源**（多维表格右上角「…」→ 更多 → 添加文档应用），否则 API 会报无权限。文档同理，在文档右上角「…」→ 添加文档应用。
 
 ## 三、配置 GitHub Secrets
 
@@ -69,10 +68,10 @@ https://xxx.feishu.cn/base/<APP_TOKEN>?table=<TABLE_ID>&view=...
 | --- | --- |
 | `FEISHU_APP_ID` | 应用 App ID |
 | `FEISHU_APP_SECRET` | 应用 App Secret |
-| `FEISHU_WORKS_APP_TOKEN` | 作品表 App Token |
-| `FEISHU_WORKS_TABLE_ID` | 作品表 Table ID |
-| `FEISHU_POSTS_APP_TOKEN` | 文章表 App Token |
-| `FEISHU_POSTS_TABLE_ID` | 文章表 Table ID |
+| `FEISHU_WORKS_APP_TOKEN` | 作品多维表格的链接（`/wiki/` 或 `/base/`） |
+| `FEISHU_WORKS_TABLE_ID` | `作品表`（或 `tbl` 开头的表 ID） |
+| `FEISHU_POSTS_APP_TOKEN` | 文章多维表格的链接（可与作品同一个） |
+| `FEISHU_POSTS_TABLE_ID` | `文章表`（或 `tbl` 开头的表 ID） |
 
 配置完后 Actions 会每 30 分钟自动同步一次，也可以在 Actions 页面手动触发「飞书同步」。
 
@@ -81,10 +80,10 @@ https://xxx.feishu.cn/base/<APP_TOKEN>?table=<TABLE_ID>&view=...
 ```bash
 export FEISHU_APP_ID=xxx
 export FEISHU_APP_SECRET=xxx
-export FEISHU_WORKS_APP_TOKEN=xxx
-export FEISHU_WORKS_TABLE_ID=xxx
-export FEISHU_POSTS_APP_TOKEN=xxx
-export FEISHU_POSTS_TABLE_ID=xxx
+export FEISHU_WORKS_APP_TOKEN="https://xxx.feishu.cn/wiki/xxx"   # 多维表格链接
+export FEISHU_WORKS_TABLE_ID="作品表"
+export FEISHU_POSTS_APP_TOKEN="https://xxx.feishu.cn/wiki/xxx"   # 可以和上面同一个
+export FEISHU_POSTS_TABLE_ID="文章表"
 node scripts/feishu-sync.mjs
 ```
 

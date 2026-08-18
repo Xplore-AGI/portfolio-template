@@ -59,6 +59,40 @@ async function getToken() {
 
 // ---------- 多维表格 ----------
 
+// Secret 里可以直接粘贴多维表格链接（知识库 /wiki/ 或 /base/ 链接），也可以填纯 app_token
+async function resolveAppToken(v) {
+  const s = String(v ?? '').trim();
+  if (!s) return null;
+  const w = s.match(/\/wiki\/([A-Za-z0-9]+)/);
+  if (w) {
+    const data = await feishu(
+      'GET',
+      `${BASE}/wiki/v2/spaces/get_node?token=${w[1]}&obj_type=wiki`
+    );
+    const node = data.node;
+    if (node?.obj_type !== 'bitable') {
+      throw new Error(`这个链接不是多维表格（实际是 ${node?.obj_type ?? '未知类型'}）：${s}`);
+    }
+    return node.obj_token;
+  }
+  const b = s.match(/\/base\/([A-Za-z0-9]+)/);
+  if (b) return b[1];
+  return s;
+}
+
+// 表 ID 的 Secret 可以直接填表名（如「作品表」），也可以填 tbl 开头的 ID
+async function resolveTableId(appToken, v, fallbackName) {
+  const s = String(v ?? '').trim() || fallbackName;
+  if (/^tbl[A-Za-z0-9]+$/.test(s)) return s;
+  const data = await feishu('GET', `${BASE}/bitable/v1/apps/${appToken}/tables?page_size=100`);
+  const hit = (data.items ?? []).find((t) => t.name === s);
+  if (!hit) {
+    const names = (data.items ?? []).map((t) => `「${t.name}」`).join('、');
+    throw new Error(`表里找不到「${s}」，现有数据表：${names || '（无）'}。请检查表名或改填 tbl 开头的表 ID`);
+  }
+  return hit.table_id;
+}
+
 async function listRecords(appToken, tableId) {
   const records = [];
   let pageToken;
@@ -285,14 +319,20 @@ async function main() {
   await getToken();
   await mkdir(ASSET_DIR, { recursive: true });
 
+  const worksApp = await resolveAppToken(process.env.FEISHU_WORKS_APP_TOKEN);
+  const worksTable = worksApp
+    ? await resolveTableId(worksApp, process.env.FEISHU_WORKS_TABLE_ID, '作品表')
+    : null;
+  const postsApp = await resolveAppToken(process.env.FEISHU_POSTS_APP_TOKEN);
+  const postsTable = postsApp
+    ? await resolveTableId(postsApp, process.env.FEISHU_POSTS_TABLE_ID, '文章表')
+    : null;
+
   let changed = 0;
 
   // 作品
-  if (process.env.FEISHU_WORKS_APP_TOKEN && process.env.FEISHU_WORKS_TABLE_ID) {
-    const records = await listRecords(
-      process.env.FEISHU_WORKS_APP_TOKEN,
-      process.env.FEISHU_WORKS_TABLE_ID
-    );
+  if (worksApp && worksTable) {
+    const records = await listRecords(worksApp, worksTable);
     await rm(WORKS_DIR, { recursive: true, force: true });
     await mkdir(WORKS_DIR, { recursive: true });
     for (const r of records) {
@@ -333,11 +373,8 @@ async function main() {
   }
 
   // 文章
-  if (process.env.FEISHU_POSTS_APP_TOKEN && process.env.FEISHU_POSTS_TABLE_ID) {
-    const records = await listRecords(
-      process.env.FEISHU_POSTS_APP_TOKEN,
-      process.env.FEISHU_POSTS_TABLE_ID
-    );
+  if (postsApp && postsTable) {
+    const records = await listRecords(postsApp, postsTable);
     await rm(POSTS_DIR, { recursive: true, force: true });
     await mkdir(POSTS_DIR, { recursive: true });
     let n = 0;
