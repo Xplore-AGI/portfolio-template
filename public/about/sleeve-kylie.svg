@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="162" height="162" viewBox="0 0 162 162">
+  <rect width="162" height="162" fill="#f2d4a0"/>
+  <circle cx="81" cy="70" r="34" fill="#e4572e"/>
+  <path d="M30 130 C 55 105, 105 105, 132 128" stroke="#212223" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <text x="81" y="152" text-anchor="middle" font-family="serif" font-size="13" font-style="italic" fill="#212223">love at first sight</text>
+</svg>

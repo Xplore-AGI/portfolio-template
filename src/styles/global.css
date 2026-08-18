@@ -1,0 +1,396 @@
+:root {
+  --bg: #fdfdfc;
+  --ink: #1a1a19;
+  --ink-soft: #6b6b66;
+  --line: #e8e8e2;
+  --card: #ffffff;
+  --accent: #e4572e;
+  --highlight: #ffe58a;
+  --radius: 16px;
+  --font-sans: 'Inter Variable', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', system-ui, sans-serif;
+  --font-hand: 'Caveat', 'Kaiti SC', 'KaiTi', cursive;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--highlight);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.hand {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* 下划波浪高亮 */
+.mark {
+  background: linear-gradient(to top, var(--highlight) 42%, transparent 42%);
+  padding: 0 0.1em;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--ink);
+  font-weight: 600;
+  font-size: 15px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.btn-primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 var(--accent);
+}
+
+.btn-ghost:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* 文章排版 */
+.prose {
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+/* 文章正文标题：与作品页同风格
+   h1 = 大节（虚线顶部分隔），h2 = 小节（橙色左标），h3 = 条目（橙色方块） */
+.prose h1 {
+  margin: 56px 0 18px;
+  padding-top: 24px;
+  border-top: 1px dashed rgba(33, 34, 35, 0.28);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 30px;
+  color: #212223;
+}
+.prose h1:first-child {
+  margin-top: 8px;
+  border-top: none;
+  padding-top: 0;
+}
+.prose h2 {
+  margin: 34px 0 12px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+  font-size: 16.5px;
+  font-weight: 600;
+  line-height: 24px;
+  color: #212223;
+}
+.prose h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 22px 0 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.55);
+}
+.prose h3::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.prose p {
+  margin: 1em 0;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+  margin: 1em 0;
+}
+
+.prose li {
+  margin: 0.4em 0;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.2em 1.2em;
+  margin: 1.4em 0;
+  color: var(--ink-soft);
+  background: #faf9f4;
+  border-radius: 0 12px 12px 0;
+}
+
+.prose code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.88em;
+  background: #f1f0ea;
+  padding: 0.15em 0.45em;
+  border-radius: 6px;
+}
+
+.prose pre {
+  background: #1f1f1e;
+  color: #f3f2ec;
+  padding: 20px 24px;
+  border-radius: 14px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+.prose img {
+  border-radius: 14px;
+  margin: 1.5em 0;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1.5px dashed var(--line);
+  margin: 2.5em 0;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Markdown 表格（文章与作品详情共用） */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0 1.8em;
+  font-size: 14px;
+  line-height: 22px;
+}
+.prose th {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.45);
+  letter-spacing: 0.05em;
+  background: #f6f5f0;
+  text-align: left;
+}
+.prose th,
+.prose td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(33, 34, 35, 0.1);
+}
+.prose td {
+  color: #595959;
+  font-variant-numeric: tabular-nums;
+}
+.prose tr:last-child td {
+  border-bottom: 1px solid rgba(33, 34, 35, 0.2);
+}
+
+/* 作品详情页：八段式案例结构
+   h2 = 一~八大节（虚线顶部分隔，呼应整站网格线）
+   h3 = 小节（橙色左标）
+   h4 = 落地方案条目 */
+.case-study h2 {
+  margin: 72px 0 20px;
+  padding-top: 28px;
+  border-top: 1px dashed rgba(33, 34, 35, 0.28);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  line-height: 34px;
+}
+.case-study h2:first-child {
+  margin-top: 4px;
+}
+.case-study h3 {
+  margin: 36px 0 12px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+  font-size: 16.5px;
+  font-weight: 600;
+  line-height: 24px;
+}
+.case-study h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 22px 0 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.55);
+}
+.case-study h4::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.case-study h4 + p {
+  margin-top: 4px;
+}
+.case-study p {
+  font-size: 15.5px;
+  line-height: 26px;
+}
+.case-study li {
+  font-size: 15px;
+  line-height: 25px;
+}
+
+/* 页面进入的轻微上浮动效 */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+  }
+}
+
+/* wireframe 风格共用正文样式（竖排导航页面） */
+.wf-greeting {
+  color: rgba(0, 0, 0, 0.37);
+  letter-spacing: -0.06px;
+  font-size: 12px;
+  font-weight: 425;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.wf-title {
+  color: #212223;
+  letter-spacing: -0.66px;
+  margin: 0 0 24px;
+  font-family: 'Inter Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 48px;
+  animation: wf-blur-fade 0.5s ease-out 0.1s both;
+}
+
+.wf-body {
+  color: #595959;
+  letter-spacing: -0.1px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 425;
+  line-height: 24px;
+}
+
+.wf-body + .wf-body {
+  margin-top: 16px;
+}
+
+.wf-back {
+  display: inline-block;
+  font-size: 13px;
+  color: #595959;
+  margin-bottom: 24px;
+  transition: color 0.15s;
+}
+
+.wf-back:hover {
+  color: #212223;
+}
+
+@keyframes wf-blur-fade {
+  from { opacity: 0; filter: blur(10px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wf-title { animation: none; }
+}
+
+/* 线框模式：开启后给内容元素加青色描边，复刻 wireframe.co 的 wireframe mode */
+.content-area::before {
+  content: '';
+  pointer-events: none;
+  border: 0.5px solid transparent;
+  transition: border-color 0.25s;
+  position: absolute;
+  inset: 0 -1px 0 0;
+}
+
+.wf-mode .content-area::before {
+  border-color: #0eb3c980;
+}
+
+.wf-mode :is(.content-area, .side-nav, .side-contact) :is(h1, h2, h3, h4, h5, h6, p, li, dt, dd, a, button, img, figure, blockquote, pre, table, th, td),
+.wf-mode :is(.wf-greeting, .wf-title, .wf-body, .wf-back, .sec, .sec-label, .kv-row, .strength, .award-row, .xp, .xp-block, .proj-list li, .impact-list li, .post-row, .work-item, .work-cover, .work-row, .work-desc, .tag, .nav-item, .contact-email),
+.wf-mode .prose :is(h2, h3, h4, p, li, a, img, blockquote, pre, code) {
+  outline-offset: 0;
+  outline: 0.5px solid #0eb3c980;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-area::before {
+    transition: none;
+  }
+}

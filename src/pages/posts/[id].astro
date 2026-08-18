@@ -1,0 +1,87 @@
+---
+import Wireframe from '../../layouts/Wireframe.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((p) => ({
+    params: { id: p.id },
+    props: { post: p },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Wireframe title={post.data.title} description={post.data.description} active="posts">
+  <a href="/posts/" class="wf-back">← 返回文章列表</a>
+  <div class="wf-greeting"><span>{fmt(post.data.pubDate)}</span></div>
+  <h1 class="wf-title">{post.data.title}</h1>
+
+  <div class="tags">
+    {post.data.tags.map((t) => <span class="tag">{t}</span>)}
+  </div>
+
+  {post.data.cover && <img class="cover" src={post.data.cover} alt={post.data.title} />}
+
+  <div class="prose">
+    <Content />
+  </div>
+
+  <nav class="end">
+    <a href="/posts/" class="end-link">更多文章 →</a>
+  </nav>
+</Wireframe>
+
+<style>
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    animation: item-fold 0.5s 0.2s both;
+  }
+  .tag {
+    font-size: 12px;
+    color: #595959;
+    padding: 3px 10px;
+    border: 1px solid rgba(33, 34, 35, 0.12);
+    border-radius: 999px;
+  }
+  .cover {
+    width: 100%;
+    border-radius: 2px;
+    margin-top: 32px;
+    box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    animation: item-fold 0.5s 0.25s both;
+  }
+  .prose {
+    margin-top: 36px;
+    animation: item-fold 0.5s 0.3s both;
+  }
+  .end {
+    margin-top: 56px;
+    border-top: 1px solid rgba(33, 34, 35, 0.08);
+    padding: 28px 0 8px;
+  }
+  .end-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: #595959;
+    transition: color 0.15s;
+  }
+  .end-link:hover { color: #212223; }
+
+  @keyframes item-fold {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tags, .cover, .prose { animation: none; }
+  }
+</style>

@@ -1,0 +1,41 @@
+name: 飞书同步
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # 每 30 分钟同步一次
+  workflow_dispatch: {} # 支持手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: feishu-sync
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 同步飞书内容
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_WORKS_APP_TOKEN: ${{ secrets.FEISHU_WORKS_APP_TOKEN }}
+          FEISHU_WORKS_TABLE_ID: ${{ secrets.FEISHU_WORKS_TABLE_ID }}
+          FEISHU_POSTS_APP_TOKEN: ${{ secrets.FEISHU_POSTS_APP_TOKEN }}
+          FEISHU_POSTS_TABLE_ID: ${{ secrets.FEISHU_POSTS_TABLE_ID }}
+        run: node scripts/feishu-sync.mjs
+
+      - name: 提交变更
+        run: |
+          git config user.name "feishu-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add src/content public/feishu
+          git diff --cached --quiet && echo "没有变更" || git commit -m "chore: 同步飞书内容 $(date +%F\ %H:%M)"
+          git pull --rebase --autostash
+          git push

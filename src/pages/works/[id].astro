@@ -1,0 +1,139 @@
+---
+import Wireframe from '../../layouts/Wireframe.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const works = await getCollection('works');
+  return works.map((w) => ({
+    params: { id: w.id },
+    props: { work: w },
+  }));
+}
+
+const { work } = Astro.props;
+const { Content } = await render(work);
+const siblings = (await getCollection('works')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const idx = siblings.findIndex((w) => w.id === work.id);
+const prev = siblings[idx - 1];
+const next = siblings[idx + 1];
+---
+
+<Wireframe title={work.data.title} description={work.data.description} active="works">
+  <a href="/works/" class="wf-back">← 返回作品列表</a>
+  <div class="wf-greeting"><span>项目</span></div>
+  <h1 class="wf-title">{work.data.title}</h1>
+  <p class="wf-body">{work.data.description}</p>
+
+  <div class="meta">
+    {work.data.client && <span><em>客户</em>{work.data.client}</span>}
+    <span><em>年份</em>{work.data.year}</span>
+    {work.data.link && (
+      <a class="meta-link" href={work.data.link} target="_blank" rel="noopener">访问项目 ↗</a>
+    )}
+  </div>
+  <div class="tags">
+    {work.data.tags.map((t) => <span class="tag">{t}</span>)}
+  </div>
+
+  {work.data.cover && <img class="hero-cover" src={work.data.cover} alt={work.data.title} />}
+
+  <div class="prose case-study">
+    <Content />
+  </div>
+
+  <nav class="pager">
+    {prev ? (
+      <a href={`/works/${prev.id}/`} class="pager-item">
+        <em>上一个</em>
+        <strong>{prev.data.title}</strong>
+      </a>
+    ) : <span />}
+    {next ? (
+      <a href={`/works/${next.id}/`} class="pager-item right">
+        <em>下一个</em>
+        <strong>{next.data.title}</strong>
+      </a>
+    ) : <span />}
+  </nav>
+</Wireframe>
+
+<style>
+  .meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+    font-size: 15px;
+    animation: item-fold 0.5s 0.25s both;
+  }
+  .meta em {
+    font-style: normal;
+    color: rgba(0, 0, 0, 0.37);
+    margin-right: 8px;
+    font-size: 12px;
+  }
+  .meta-link { color: #e4572e; }
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .tag {
+    font-size: 12px;
+    color: #595959;
+    padding: 3px 10px;
+    border: 1px solid rgba(33, 34, 35, 0.12);
+    border-radius: 999px;
+  }
+  .hero-cover {
+    width: 100%;
+    border-radius: 2px;
+    margin: 40px 0 0;
+    box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    animation: item-fold 0.5s 0.3s both;
+  }
+  .prose {
+    margin-top: 40px;
+    animation: item-fold 0.5s 0.35s both;
+  }
+  .pager {
+    margin-top: 72px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    border-top: 1px solid rgba(33, 34, 35, 0.08);
+    padding: 28px 0 8px;
+  }
+  .pager-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 46%;
+  }
+  .pager-item em {
+    font-style: normal;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.37);
+  }
+  .pager-item strong {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .pager-item:hover strong { color: #e4572e; }
+  .pager-item.right {
+    text-align: right;
+    margin-left: auto;
+  }
+
+  @keyframes item-fold {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .meta, .hero-cover, .prose { animation: none; }
+  }
+</style>

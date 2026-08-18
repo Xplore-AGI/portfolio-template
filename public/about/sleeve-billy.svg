@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="162" height="162" viewBox="0 0 162 162">
+  <rect width="162" height="162" fill="#2f5d50"/>
+  <rect x="24" y="24" width="114" height="114" fill="none" stroke="#fdfdfc" stroke-width="2.5"/>
+  <circle cx="81" cy="81" r="30" fill="#fdfdfc"/>
+  <circle cx="81" cy="81" r="18" fill="#2f5d50"/>
+  <text x="81" y="140" text-anchor="middle" font-family="serif" font-size="12" font-style="italic" fill="#fdfdfc">me &amp; mrs jones</text>
+</svg>

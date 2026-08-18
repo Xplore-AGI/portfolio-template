@@ -1,0 +1,380 @@
+---
+// 关于页（默认首页）：简历式布局，参考 jib.design 的窄栏行式列表
+import Wireframe from '../layouts/Wireframe.astro';
+import { PROFILE } from '../config';
+
+// ↓↓↓ 以下三组数据都是示例，换成你自己的内容 ↓↓↓
+const strengths = [
+  {
+    title: '示例优势一',
+    body: '在这里写你的第一项优势：你擅长什么、有什么不一样的方法论、取得过什么结果。两三句话即可。',
+  },
+  {
+    title: '示例优势二',
+    body: '在这里写你的第二项优势。可以讲一个具体项目，用数字说话最有说服力，比如「转化率提升了 30%」。',
+  },
+  {
+    title: '示例优势三',
+    body: '在这里写你的第三项优势。三条左右刚刚好，多了没人看完。',
+  },
+];
+
+const awards = [
+  { year: '2024', text: '示例奖项：某设计大赛《一等奖》' },
+  { year: '2025', text: '示例奖项：某年度《最佳设计师》' },
+];
+
+const basics = [
+  { label: '工作年限', value: '5+' },
+  { label: '电话 / 微信', value: PROFILE.phone },
+  { label: '邮箱', value: PROFILE.email, href: `mailto:${PROFILE.email}` },
+  { label: '学历', value: PROFILE.education },
+];
+
+interface Xp {
+  range: string;
+  company: string;
+  tags: string[];
+  role: string;
+  dept: string;
+  duty?: string;
+  projects?: { name: string; desc: string }[];
+  impact?: string[];
+}
+
+// ↓↓↓ 工作经历示例：照着这个格式换成你自己的，不需要的字段（duty/projects/impact）直接删掉 ↓↓↓
+const experiences: Xp[] = [
+  {
+    range: '2023.01 — 至今',
+    company: '示例公司 A',
+    tags: ['设计方向'],
+    role: '资深设计师',
+    dept: '体验设计部',
+    duty: '用两三句话写你在这家公司负责什么。这是示例文案：负责核心产品的体验设计与团队协作，推动设计规范落地。',
+    projects: [
+      { name: '示例项目一', desc: '一句话写你做了什么、带来了什么结果，最好带数字：新版上线后转化率提升 30%' },
+      { name: '示例项目二', desc: '第二个代表性项目的简介' },
+    ],
+    impact: [
+      '写你为团队或组织留下的东西，比如：搭建设计规范组件库，被 3 条业务线复用',
+    ],
+  },
+  {
+    range: '2021.06 — 2022.12',
+    company: '示例公司 B',
+    tags: ['产品方向'],
+    role: '设计师',
+    dept: '产品设计组',
+    duty: '第二段经历的职责描述示例。',
+    projects: [{ name: '示例项目', desc: '代表性项目简介' }],
+  },
+];
+---
+
+<Wireframe title="关于" active="about">
+  <div class="wf-greeting"><span>关于</span></div>
+  <h1 class="wf-title">你好，我是李小白<br />把想法变成产品</h1>
+  <p class="wf-body">{PROFILE.intro}</p>
+
+  <!-- 01 基础信息 -->
+  <section class="sec">
+    <h2 class="sec-label">01 · 基础信息</h2>
+    <dl class="kv">
+      {basics.map((b) => (
+        <div class="kv-row">
+          <dt>{b.label}</dt>
+          <dd>
+            {b.href ? <a href={b.href}>{b.value}</a> : b.value}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <!-- 02 核心优势 -->
+  <section class="sec">
+    <h2 class="sec-label">02 · 核心优势</h2>
+    <div class="strengths">
+      {strengths.map((s) => (
+        <article class="strength">
+          <h3>{s.title}</h3>
+          <p>{s.body}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- 03 获得奖项 -->
+  <section class="sec">
+    <h2 class="sec-label">03 · 获得奖项</h2>
+    <ul class="award-list">
+      {awards.map((a) => (
+        <li class="award-row">
+          <span class="hand award-year">{a.year}</span>
+          <span>{a.text}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- 04 自我评价 -->
+  <section class="sec">
+    <h2 class="sec-label">04 · 自我评价</h2>
+    <p class="wf-body eval">
+      10 年+ 互联网经验，可管理、可执行的复合型设计工作者。具备汽车行业产品体验经验积累，负责过 100W+ 量级用户产品设计，对产品体验 UE/UI 表达经验丰富，熟知 C / B / HMI 平台产品特性，准确把握用户需求。对产品从调研到落地执行有项目管理经验，善于与多方团队沟通协调，服务多产品多平台。性格内外和谐，易相处、重仪表，自驱与学习能力强。
+    </p>
+  </section>
+
+  <!-- 05 个人经历 -->
+  <section class="sec">
+    <h2 class="sec-label">05 · 个人经历</h2>
+    <div class="xp-list">
+      {experiences.map((e) => (
+        <article class="xp">
+          <div class="xp-head">
+            <span class="hand xp-range">{e.range}</span>
+            <h3 class="xp-company">{e.company}</h3>
+            <div class="xp-tags">{e.tags.map((t) => <span>{t}</span>)}</div>
+          </div>
+          <p class="xp-role">{e.role}</p>
+          <p class="xp-dept">{e.dept}</p>
+
+          {e.duty && (
+            <div class="xp-block">
+              <h4>工作职责</h4>
+              <p>{e.duty}</p>
+            </div>
+          )}
+
+          {e.projects && e.projects.length > 0 && (
+            <div class="xp-block">
+              <h4>重点项目</h4>
+              <ul class="proj-list">
+                {e.projects.map((p) => (
+                  <li>
+                    <strong>{p.name}</strong>
+                    <span>{p.desc}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {e.impact && e.impact.length > 0 && (
+            <div class="xp-block">
+              <h4>团队影响</h4>
+              <ul class="impact-list">
+                {e.impact.map((i) => <li>{i}</li>)}
+              </ul>
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </section>
+
+</Wireframe>
+
+<style>
+  .sec {
+    margin-top: 72px;
+    animation: sec-fold 0.5s both;
+    animation-delay: 0.25s;
+  }
+  .sec-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: rgba(0, 0, 0, 0.37);
+    margin: 0 0 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(33, 34, 35, 0.08);
+  }
+  .hand {
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+  }
+
+  /* 基础信息 */
+  .kv-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(33, 34, 35, 0.06);
+  }
+  .kv-row dt {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.37);
+    white-space: nowrap;
+  }
+  .kv-row dd {
+    font-size: 15px;
+    font-weight: 500;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .kv-row dd a {
+    color: #e4572e;
+  }
+  .kv-row dd a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* 核心优势 */
+  .strength + .strength {
+    margin-top: 32px;
+  }
+  .strength h3 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    margin: 0 0 10px;
+  }
+  .strength p {
+    font-size: 15px;
+    line-height: 25px;
+    color: #595959;
+    margin: 0;
+  }
+
+  /* 奖项 */
+  .award-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .award-row {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    padding: 11px 0;
+    border-bottom: 1px solid rgba(33, 34, 35, 0.06);
+    font-size: 15px;
+    line-height: 24px;
+  }
+  .award-year {
+    font-size: 22px;
+    color: rgba(115, 115, 115, 0.6);
+    width: 52px;
+    flex-shrink: 0;
+  }
+
+  /* 自我评价 */
+  .eval {
+    font-size: 15px;
+    line-height: 26px;
+  }
+
+  /* 个人经历 */
+  .xp + .xp {
+    margin-top: 56px;
+  }
+  .xp-range {
+    font-size: 21px;
+    color: rgba(115, 115, 115, 0.6);
+    display: block;
+  }
+  .xp-company {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin: 6px 0 4px;
+  }
+  .xp-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .xp-tags span {
+    font-size: 12px;
+    color: #595959;
+    padding: 2px 10px;
+    border: 1px solid rgba(33, 34, 35, 0.12);
+    border-radius: 999px;
+  }
+  .xp-role {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 16px 0 0;
+  }
+  .xp-dept {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.37);
+    margin: 4px 0 0;
+  }
+  .xp-block {
+    margin-top: 24px;
+  }
+  .xp-block h4 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: rgba(0, 0, 0, 0.37);
+    margin: 0 0 10px;
+  }
+  .xp-block > p {
+    font-size: 15px;
+    line-height: 25px;
+    color: #595959;
+    margin: 0;
+  }
+  .proj-list,
+  .impact-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .proj-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 14px;
+    border-left: 2px solid rgba(228, 87, 46, 0.5);
+  }
+  .proj-list strong {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .proj-list span,
+  .impact-list li {
+    font-size: 14px;
+    line-height: 24px;
+    color: #595959;
+  }
+  .impact-list li {
+    padding-left: 14px;
+    position: relative;
+  }
+  .impact-list li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(33, 34, 35, 0.25);
+    position: absolute;
+    left: 0;
+    top: 10px;
+  }
+
+  @keyframes sec-fold {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+
+  @media (max-width: 480px) {
+    .kv-row { gap: 12px; }
+    .kv-row dt { font-size: 12px; }
+    .kv-row dd { font-size: 13.5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sec { animation: none; }
+  }
+</style>

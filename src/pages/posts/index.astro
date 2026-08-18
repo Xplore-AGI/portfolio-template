@@ -1,0 +1,107 @@
+---
+import Wireframe from '../../layouts/Wireframe.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('posts')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Wireframe title="文章" active="posts">
+  <div class="wf-greeting"><span>文章</span></div>
+  <h1 class="wf-title">写点东西。</h1>
+  <p class="wf-body">关于设计、工具与生活的一些记录。</p>
+
+  <ul class="post-list">
+    {posts.map((p, i) => (
+      <li>
+        <a href={`/posts/${p.id}/`} class="post-row" style={`animation-delay:${0.3 + i * 0.08}s`}>
+          <div class="post-main">
+            <h2>{p.data.title}</h2>
+            {p.data.description && <p>{p.data.description}</p>}
+            <div class="tags">
+              {p.data.tags.map((t) => <span class="tag">{t}</span>)}
+            </div>
+          </div>
+          <time class="hand date">{fmt(p.data.pubDate)}</time>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Wireframe>
+
+<style>
+  .post-list {
+    list-style: none;
+    margin-top: 56px;
+  }
+  .post-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(33, 34, 35, 0.08);
+    transition: padding-left 0.15s ease;
+    animation: row-fold 0.5s both;
+  }
+  .post-list li:first-child .post-row {
+    border-top: 1px solid rgba(33, 34, 35, 0.08);
+  }
+  .post-row:hover {
+    padding-left: 10px;
+  }
+  .post-main h2 {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    transition: color 0.15s;
+  }
+  .post-row:hover h2 {
+    color: #e4572e;
+  }
+  .post-main p {
+    margin-top: 8px;
+    font-size: 15px;
+    color: #595959;
+    line-height: 23px;
+  }
+  .tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .tag {
+    font-size: 12px;
+    color: #595959;
+    padding: 2px 10px;
+    border: 1px solid rgba(33, 34, 35, 0.12);
+    border-radius: 999px;
+  }
+  .hand {
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+  }
+  .date {
+    font-size: 20px;
+    color: rgba(115, 115, 115, 0.6);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @keyframes row-fold {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+
+  @media (max-width: 600px) {
+    .post-row { flex-direction: column; gap: 8px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-row { animation: none; }
+  }
+</style>

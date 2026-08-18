@@ -1,0 +1,148 @@
+---
+import Wireframe from '../../layouts/Wireframe.astro';
+import { getCollection } from 'astro:content';
+
+const works = (await getCollection('works')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<Wireframe title="作品" active="works">
+  <div class="wf-greeting"><span>作品</span></div>
+  <h1 class="wf-title">最近做的事。</h1>
+  <p class="wf-body">
+    品牌与产品设计的项目精选——{works.length} 件作品，按时间倒序排列。
+  </p>
+
+  <div class="work-list">
+    {works.map((w, i) => (
+      <a href={`/works/${w.id}/`} class="work-item" style={`animation-delay:${0.3 + i * 0.08}s`}>
+        {w.data.cover && (
+          <div class="work-cover">
+            <img src={w.data.cover} alt={w.data.title} loading="lazy" />
+          </div>
+        )}
+        <div class="work-row">
+          <h2>{w.data.title}</h2>
+          <span class="hand year">{w.data.year}</span>
+        </div>
+        <p class="work-desc">{w.data.description}</p>
+        <div class="tags">
+          {w.data.tags.map((t) => <span class="tag">{t}</span>)}
+        </div>
+      </a>
+    ))}
+  </div>
+</Wireframe>
+
+<style>
+  .work-list {
+    margin-top: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .work-item {
+    display: block;
+    background: #ffffff;
+    border: 1px solid rgba(33, 34, 35, 0.08);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 10px 28px -14px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    animation: item-fold 0.5s both;
+  }
+  .work-item:hover {
+    border-color: rgba(33, 34, 35, 0.16);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.03),
+      0 20px 44px -16px rgba(0, 0, 0, 0.18);
+  }
+  .work-cover {
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f1f0ea;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .work-item:hover .work-cover {
+    transform: translateY(-3px);
+  }
+  .work-cover img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .work-item:hover .work-cover img {
+    transform: scale(1.05);
+  }
+  .work-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 0 4px;
+  }
+  .work-row h2 {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: #212223;
+    background: linear-gradient(to top, rgba(255, 229, 138, 0.9) 40%, transparent 40%);
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    transition: background-size 0.35s ease;
+  }
+  .work-item:hover .work-row h2 {
+    background-size: 100% 100%;
+  }
+  .hand {
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+  }
+  .year {
+    font-size: 22px;
+    color: rgba(115, 115, 115, 0.6);
+    white-space: nowrap;
+  }
+  .work-desc {
+    color: #595959;
+    font-size: 15px;
+    line-height: 23px;
+    margin-top: 8px;
+    padding: 0 4px;
+  }
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding: 0 4px 4px;
+  }
+  .tag {
+    font-size: 12px;
+    color: #595959;
+    padding: 3px 10px;
+    border: 1px solid rgba(33, 34, 35, 0.12);
+    border-radius: 999px;
+  }
+
+  @keyframes item-fold {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+
+  @media (max-width: 600px) {
+    .work-item { padding: 12px; border-radius: 10px; }
+    .work-cover { border-radius: 6px; }
+    .work-row, .work-desc, .tags { padding-left: 2px; padding-right: 2px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-item, .work-cover, .work-cover img, .work-row h2 { animation: none; transition: none; }
+  }
+</style>

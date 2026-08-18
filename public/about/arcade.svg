@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="179" height="186" viewBox="0 0 179 186">
+  <rect width="179" height="186" fill="#1a1a19"/>
+  <rect x="14" y="10" width="151" height="130" rx="6" fill="#0b0b0a"/>
+  <path d="M40 40 a 16 16 0 0 1 16 16 a 16 16 0 1 1 -16 -16" fill="#ffe58a" transform="rotate(-30 56 56)"/>
+  <circle cx="130" cy="58" r="6" fill="#e4572e"/>
+  <circle cx="110" cy="84" r="6" fill="#e4572e"/>
+  <circle cx="140" cy="106" r="6" fill="#e4572e"/>
+  <rect x="30" y="110" width="8" height="8" fill="#7ec8e3"/>
+  <rect x="52" y="118" width="8" height="8" fill="#7ec8e3"/>
+  <rect x="34" y="160" width="52" height="14" rx="4" fill="#e4572e"/>
+  <circle cx="150" cy="167" r="8" fill="#fdfdfc"/>
+  <text x="100" y="172" font-family="monospace" font-size="12" fill="#ffe58a">hi-score</text>
+</svg>

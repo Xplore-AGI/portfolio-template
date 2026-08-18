@@ -1,0 +1,374 @@
+---
+// wireframe.co 风格的页面骨架：左侧竖排导航 + 左下联系 + 边缘网格线
+// 首页以外的页面共用
+import '@fontsource-variable/inter';
+import '@fontsource/caveat/600.css';
+import '../styles/global.css';
+import { SITE, PROFILE, SOCIAL } from '../config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  active?: string;
+}
+
+const { title, description = SITE.description } = Astro.props;
+const pageTitle = title ? `${title} — ${SITE.title}` : SITE.title;
+
+const navLinks = [
+  { href: '/', label: '关于', key: 'about' },
+  { href: '/works/', label: '作品', key: 'works' },
+  { href: '/posts/', label: '文章', key: 'posts' },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#FDFDFC" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      try {
+        if (localStorage.getItem('wf-mode') === 'on') document.documentElement.classList.add('wf-mode');
+      } catch (e) {}
+    </script>
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <div class="page">
+      <div class="border-strip left"></div>
+      <div class="border-strip right"></div>
+      <div class="grid-line nav"></div>
+      <div class="grid-line content-left"></div>
+      <div class="grid-line content-right"></div>
+      <div class="grid-line container-right"></div>
+      <div class="bottom-mask"></div>
+
+      <a href="/" class="mobile-logo" aria-label="首页">{PROFILE.name}</a>
+      <nav class="mobile-nav">
+        {navLinks.map((l) => (
+          <a href={l.href} class:list={{ active: Astro.props.active === l.key }}>{l.label}</a>
+        ))}
+      </nav>
+
+      <nav class="side-nav">
+        <a href="/" class="logo" aria-label="首页">
+          <svg width="32" height="32" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect x="3" y="4" width="9" height="17" rx="1.5" fill="#212223"/>
+            <rect x="15" y="4" width="9" height="11" rx="1.5" fill="#212223"/>
+            <rect x="15" y="17" width="9" height="7" rx="1.5" fill="#212223"/>
+          </svg>
+        </a>
+        <div class="nav-links">
+          {navLinks.map((l) => (
+            <div class:list={['nav-item', { active: Astro.props.active === l.key }]}>
+              <span class="nav-bar"></span>
+              <a class="nav-link" href={l.href}>{l.label}</a>
+            </div>
+          ))}
+        </div>
+      </nav>
+
+      <div class="side-contact">
+        <p class="contact-label">商务合作请联系：</p>
+        <a href={`mailto:${PROFILE.email}`} class="contact-email">{PROFILE.email}</a>
+        <p class="contact-label" style="margin-top:4px">{PROFILE.phone}（同微信）</p>
+      </div>
+
+      {SOCIAL.x && (
+        <div class="follow-right">
+          <div class="follow-divider"></div>
+          <a class="follow-link" href={`https://x.com/${SOCIAL.x}`} target="_blank" rel="noopener noreferrer">
+            关注
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.9 1.2h3.7l-8.1 9.3L24 22.8h-7.5l-5.9-7.7-6.7 7.7H.2l8.7-9.9L0 1.2h7.7l5.3 7 6-7zm-1.3 19.4h2L6.6 3.3h-2.2l13.2 17.3z"/>
+            </svg>
+          </a>
+        </div>
+      )}
+
+      <main class="main-content">
+        <button class="wf-toggle" id="wf-toggle" aria-pressed="false" title="线框模式：显示页面元素结构">
+          线框模式
+          <span class="wf-switch"><span class="wf-knob"></span></span>
+        </button>
+        <div class="content-area">
+          <slot />
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const btn = document.getElementById('wf-toggle')!;
+      const set = (on: boolean) => {
+        document.documentElement.classList.toggle('wf-mode', on);
+        btn.classList.toggle('on', on);
+        btn.setAttribute('aria-pressed', String(on));
+        try {
+          localStorage.setItem('wf-mode', on ? 'on' : 'off');
+        } catch {}
+      };
+      set(document.documentElement.classList.contains('wf-mode'));
+      btn.addEventListener('click', () => set(!document.documentElement.classList.contains('wf-mode')));
+    </script>
+  </body>
+</html>
+
+<style>
+  .page {
+    background: var(--bg, #fdfdfc);
+    min-height: 100vh;
+    position: relative;
+  }
+  /* 竖线参数复刻自原站：两侧 40px 虚线边条 + 内部 4 条 1px 虚线 */
+  .border-strip {
+    z-index: 0;
+    opacity: 0.5;
+    background-color: rgba(73, 73, 73, 0.07);
+    border-right: 1px dashed rgba(73, 73, 73, 0.4);
+    width: 40px;
+    position: fixed;
+    top: -50px;
+    bottom: -50px;
+    left: 0;
+  }
+  .border-strip.right {
+    left: auto;
+    right: 0;
+    transform: scaleX(-1);
+  }
+  .grid-line {
+    z-index: 0;
+    pointer-events: none;
+    border-right: 1px dashed rgba(73, 73, 73, 0.1);
+    width: 0;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
+  .grid-line.nav { left: calc(50% - 512px); }
+  .grid-line.content-left { left: calc(50% - 342px); }
+  .grid-line.content-right { left: calc(50% + 342px); }
+  .grid-line.container-right { left: calc(50% + 512px); }
+  .bottom-mask {
+    pointer-events: none;
+    z-index: 10;
+    background: linear-gradient(rgba(253, 253, 252, 0) 0%, #fdfdfc 100%);
+    height: 120px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .side-nav {
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    position: fixed;
+    top: 120px;
+    left: max(24px, 50% - 512px);
+  }
+  .logo { display: block; margin-left: -4px; }
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .nav-item { display: flex; align-items: center; gap: 10px; }
+  .nav-bar {
+    width: 12px;
+    height: 1.5px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+  .nav-item.active .nav-bar { background: #212223; }
+  .nav-item:hover .nav-bar { background: rgba(33, 34, 35, 0.4); }
+  .nav-link {
+    font-size: 13px;
+    font-weight: 450;
+    color: #595959;
+    letter-spacing: -0.06px;
+    transition: color 0.15s;
+  }
+  .nav-item.active .nav-link { color: #212223; font-weight: 600; }
+  .side-nav:hover .nav-link:not(:hover) { color: #929292; }
+  .nav-link:hover { color: #212223; }
+
+  .side-contact {
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: fixed;
+    bottom: 40px;
+    left: max(24px, 50% - 512px);
+  }
+  .contact-label { color: #595959; font-size: 11px; line-height: 18px; margin: 0; }
+  .contact-email {
+    color: #595959;
+    font-size: 13px;
+    line-height: 20px;
+    transition: color 0.15s;
+  }
+  .contact-email:hover { color: #212223; }
+
+  .follow-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: absolute;
+    top: 164px;
+    right: 0;
+  }
+  .follow-divider { width: 1px; height: 24px; background: rgba(33, 34, 35, 0.15); margin-bottom: 12px; }
+  .follow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 450;
+    color: #595959;
+    writing-mode: vertical-rl;
+    transition: color 0.15s;
+  }
+  .follow-link:hover { color: #212223; }
+
+  /* 线框模式开关：复刻自原站 wireframeToggleRow / wfSwitch / wfKnob */
+  .wf-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    position: absolute;
+    top: 148px;
+    right: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 425;
+    line-height: 20px;
+    letter-spacing: -0.06px;
+    color: rgba(0, 0, 0, 0.4);
+  }
+  .wf-switch {
+    flex-shrink: 0;
+    position: relative;
+    width: 16px;
+    height: 10px;
+    border-radius: 3px;
+    background: #eaeaea;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.11);
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .wf-switch::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .wf-toggle:hover .wf-switch::after { opacity: 1; }
+  .wf-knob {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 8px;
+    height: 10px;
+    border-radius: 3px;
+    background: linear-gradient(#fff 0% 100%);
+    box-shadow: 0 0 0 1px #cdcdcd, 0 2px 4px -2px rgba(54, 54, 54, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .wf-toggle.on .wf-switch { background: #0eb3c9; box-shadow: 0 0 0 1px #0eb3c9; }
+  .wf-toggle.on .wf-knob {
+    transform: translateX(8px);
+    box-shadow: 0 0 0 1px #0eb3c9, 0 2px 4px -2px rgba(54, 54, 54, 0.4);
+  }
+
+  .main-content {
+    box-sizing: border-box;
+    max-width: 1024px;
+    min-height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+  :global(.content-area) {
+    width: 100%;
+    max-width: 684px;
+    padding: 120px 0 64px;
+    position: relative;
+  }
+
+  .mobile-logo, .mobile-nav { display: none; }
+
+  @media (max-width: 1200px) {
+    .side-nav, .side-contact, .follow-right, .wf-toggle, .grid-line.nav, .grid-line.container-right { display: none; }
+    .mobile-logo {
+      display: block;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      font-size: 16px;
+      font-weight: 700;
+      background: rgba(253, 253, 252, 0.9);
+      backdrop-filter: blur(8px);
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(33, 34, 35, 0.12);
+    }
+    .mobile-nav {
+      display: flex;
+      gap: 4px;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(33, 34, 35, 0.1);
+      border-radius: 999px;
+      padding: 6px;
+    }
+    .mobile-nav a {
+      font-size: 14px;
+      color: #595959;
+      padding: 6px 14px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .mobile-nav a.active {
+      color: #212223;
+      background: #f1f0ea;
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 768px) {
+    :global(.content-area) {
+      max-width: 100%;
+      padding: 100px 20px 64px;
+    }
+    :global(.wf-title) { font-size: 36px !important; line-height: 40px !important; }
+    .grid-line.content-left, .grid-line.content-right { display: none; }
+    .border-strip, .border-strip.right { width: 8px; }
+  }
+</style>
