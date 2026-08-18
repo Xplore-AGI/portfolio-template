@@ -10,7 +10,7 @@
 
 - [第 0 章 · 这套方案是怎么回事](#第-0-章--这套方案是怎么回事)
 - [第 1 章 · 准备工作（注册 3 个免费账号）](#第-1-章--准备工作注册-3-个免费账号)
-- [第 2 章 · 拿到你的网站（复制模板，1 分钟）](#第-2-章--拿到你的网站复制模板1-分钟)
+- [第 2 章 · 拿到你的网站（两条路线任选）](#第-2-章--拿到你的网站两条路线任选)
 - [第 3 章 · 让网站上线（Cloudflare 免费部署）](#第-3-章--让网站上线cloudflare-免费部署)
 - [第 4 章 · 把飞书变成你的内容后台](#第-4-章--把飞书变成你的内容后台)
 - [第 5 章 · 打通自动同步（填 6 把钥匙）](#第-5-章--打通自动同步填-6-把钥匙)
@@ -90,11 +90,19 @@
 
 ---
 
-## 第 2 章 · 拿到你的网站（复制模板，1 分钟）
+## 第 2 章 · 拿到你的网站（两条路线任选）
 
-网站的外观和代码已经做好了，放在一个「模板仓库」里，你复制一份就变成自己的。
+这一章有**两个方法**，选一个就行：
 
-### 2.1 复制模板到自己账号下
+| | 方法一：复制现成模板 | 方法二：用自己的代码 |
+| --- | --- | --- |
+| 适合谁 | 完全零基础，想要一个设计好的网站 | 自己写代码，或让 AI（ChatGPT / Claude / Cursor 等）帮你写过网页、想保留自己的设计 |
+| 网站代码哪来 | 复制一份模板 | 把你自己的代码传上去 |
+| 后续步骤 | 完全一样（飞书配置、钥匙、部署） | 完全一样 |
+
+> 不知道选哪个 → 选**方法一**。本教程后面的章节按方法一讲解，方法二的差别只在第 2 章，从第 3 章起两条路线合流。
+
+### 2.1 方法一：复制模板到自己账号下
 
 1. 确保你已在浏览器里**登录 GitHub**
 2. 打开模板仓库：**https://github.com/Xplore-AGI/portfolio-template**
@@ -121,6 +129,51 @@
    npm run dev
    ```
 4. 浏览器打开 [http://localhost:4321](http://localhost:4321) 就能看到网站了
+
+### 2.3 方法二：用自己的代码（自己写 / AI 写的）
+
+和方法一的差别只有一件事：**网站代码是你自己的**。你只需要多做两步——把代码传上 GitHub、把「搬运工」文件加进项目——然后让 AI 帮你接个线，其余章节照常做。
+
+**第 1 步 · 把你的代码传到 GitHub**
+
+1. 登录 GitHub → 右上角「**+**」→「**New repository**」
+2. Repository name 填英文名（如 `my-website`），选 **Public**，点「Create repository」
+3. 在新仓库页面点「**uploading an existing file**」链接（以后则是「**Add file → Upload files**」），把你的项目文件夹**拖进**浏览器窗口
+4. 拖完点绿色「**Commit changes**」。文件多的话分几批传（网页一次最多 100 个文件）
+
+**第 2 步 · 把「搬运工」的两个文件加进项目**
+
+这套方案的核心和网站长什么样无关，就两个文件：
+
+| 文件 | 作用 |
+| --- | --- |
+| `scripts/feishu-sync.mjs` | 搬运工：从飞书拉内容，生成 Markdown |
+| `.github/workflows/feishu-sync.yml` | 闹钟：每 30 分钟叫搬运工干一次活 |
+
+在你的仓库里点「**Add file → Create new file**」，文件名**照抄下面路径**（`.github` 开头有个点，没有这个文件夹没关系，照抄会自动创建）：
+
+- 先建 `scripts/feishu-sync.mjs`
+- 再建 `.github/workflows/feishu-sync.yml`
+
+文件内容从模板仓库复制（打开链接 → 点右上角「**Raw**」→ 全选复制）：
+
+- [scripts/feishu-sync.mjs 的内容](https://github.com/Xplore-AGI/portfolio-template/blob/main/scripts/feishu-sync.mjs)
+- [feishu-sync.yml 的内容](https://github.com/Xplore-AGI/portfolio-template/blob/main/.github/workflows/feishu-sync.yml)
+
+**第 3 步 · 让 AI 帮你「接线」**
+
+搬运工会把内容生成到 `src/content/works/` 和 `src/content/posts/` 两个文件夹（一篇内容一个 `.md` 文件，开头有 title / cover / tags 等信息），图片存到 `public/feishu/`。你的网站要「认得」这些文件——这步不用自己写，把你正在用的 AI 助手叫出来，**复制这段话给它**：
+
+> 我的项目里加了飞书同步功能：运行 `node scripts/feishu-sync.mjs` 会把飞书内容生成 Markdown 文件到 `src/content/works/`（作品）和 `src/content/posts/`（文章），文件开头是 frontmatter（title、description、cover、tags、pubDate 等），图片存放在 `public/feishu/`。请帮我让网站构建时读取这两个目录，渲染出「作品列表 + 作品详情页」「文章列表 + 文章详情页」。我的框架是 ___（Astro / Next.js / Vue / 纯 HTML……）。如果这两个目录位置不合适，也可以修改 `feishu-sync.mjs` 顶部的路径设置。
+
+**第 4 步 · 剩下的章节照常做**
+
+- 第 4 章（飞书应用 + 知识库 + 两个表）——一步不少
+- 第 5 章（6 把钥匙 + 第一次同步）——一步不少
+- 第 3 章（Cloudflare 部署）——任何静态网站都支持；已经部署在别处（如 Vercel）也能用，思路相同
+- 第 6、7 章的写文章、发作品流程，和用模板的人完全一样
+
+> 换句话说：**这套「飞书当后台」的能力是通用的**，模板只是附赠了一份设计好的外观。
 
 ---
 
